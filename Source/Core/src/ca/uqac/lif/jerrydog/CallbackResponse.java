@@ -103,7 +103,8 @@ public class CallbackResponse
 		}
 
 		/**
-		 * Disables the client-side caching in the HTTP response to be sent 
+		 * Disables the client-side caching in the HTTP response to be sent
+		 * @return This response 
 		 */
 		public CallbackResponse disableCaching()
 		{
@@ -117,6 +118,7 @@ public class CallbackResponse
 		/**
 		 * Sets the HTTP response code
 		 * @param code The code
+		 * @return This response
 		 */
 		public CallbackResponse setCode(int code)
 		{
@@ -136,6 +138,7 @@ public class CallbackResponse
 		/**
 		 * Sets the response contents
 		 * @param contents A string with the response contents
+		 * @return This response
 		 */
 		public CallbackResponse setContents(String contents)
 		{
@@ -146,6 +149,7 @@ public class CallbackResponse
 		/**
 		 * Sets the response contents
 		 * @param contents An array of bytes with the response contents
+		 * @return This response
 		 */
 		public CallbackResponse setContents(byte[] contents)
 		{
@@ -165,6 +169,7 @@ public class CallbackResponse
 		/**
 		 * Sets the response's content type
 		 * @param t The content type
+		 * @return This response
 		 */
 		public CallbackResponse setContentType(ContentType t)
 		{
@@ -175,6 +180,7 @@ public class CallbackResponse
 		/**
 		 * Sets the response's content type
 		 * @param mime The MIME type
+		 * @return This response
 		 */
 		public CallbackResponse setContentType(String mime)
 		{
@@ -185,6 +191,7 @@ public class CallbackResponse
 		/**
 		 * Sets the response as an attachment to be downloaded
 		 * @param filename The filename
+		 * @return This response
 		 */
 		public CallbackResponse setAttachment(String filename)
 		{
@@ -196,6 +203,7 @@ public class CallbackResponse
 		 * Sets a response header
 		 * @param name The parameter name
 		 * @param value The parameter value
+		 * @return This response
 		 */
 		public CallbackResponse setHeader(String name, String value)
 		{
@@ -265,6 +273,7 @@ public class CallbackResponse
 		/**
 		 * Add a cookie to the response
 		 * @param c The cookie to add
+		 * @return This response
 		 */
 		public CallbackResponse addResponseCookie(Cookie c)
 		{
@@ -277,6 +286,7 @@ public class CallbackResponse
 		 * Add multiple cookies to the response
 		 * @param t The HTTP exchange
 		 * @param cookies The cookies to add
+		 * @return This response
 		 */
 		public CallbackResponse addResponseCookies(HttpExchange t, Collection<Cookie> cookies)
 		{

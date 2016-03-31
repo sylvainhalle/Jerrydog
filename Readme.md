@@ -123,12 +123,14 @@ already contain the callbacks.
 Going further
 -------------
 
-This simple example show the basic functionality of Jerrydog. It is
+This simple example shows the basic functionality of Jerrydog. It is
 possible to create more complex servers and callbacks.
 
 - The `RestCallback` class provides functionalities to encode and
   decode URL parameters (such as "foo=bar&baz=123&abc")
-- The `InnerFileCallback` can easily the contents of local files
+- The `InnerFileCallback` can easily server the contents of local files
+- Cookies can be carried in requests and responses using the `Cookie`
+  class
 
 Dependencies
 ------------
