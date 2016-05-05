@@ -16,6 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package ca.uqac.lif.jerrydog;
+import java.util.Iterator;
+import java.util.List;
+
+import com.sun.net.httpserver.HttpExchange;
 
 /**
  * Representation of an HTTP request/response cookie.
@@ -43,6 +47,50 @@ public class Cookie
     super();
     m_name = name;
     m_value = value;
+  }
+  
+  /**
+   * Instantiates a cookie from the Cookie field of an HttpExchange instance
+   * If there is no cookie with this name, the value will be an empty string.
+   * @param t The HttpExchange instance
+   * @param name The name of the cookie to extract
+   */
+  public Cookie(HttpExchange t, String name)
+  {
+	super();
+	m_name = name;
+	
+	//Extract cookie from header
+	List<String> cookies = t.getRequestHeaders().get("Cookie");
+	String cookie = "";
+    int cookieIndex = -1;
+    int cookieIndexEnd = -1;
+    for(Iterator<String> i = cookies.iterator(); i.hasNext();)
+    {
+      cookie = i.next();
+      cookieIndex = cookie.indexOf(name);
+      if(cookieIndex != -1)
+      {
+        //Skip "<name>=" to get to the character after "="
+        cookieIndex = cookieIndex + name.length() + 1;
+        break;
+      }
+    }
+    if(cookieIndex != -1)
+    {
+      cookie = cookie.substring(cookieIndex);
+      cookieIndexEnd = cookie.indexOf(';');
+      if(cookieIndexEnd != -1)
+      {
+        cookie = cookie.substring(0, cookieIndexEnd);
+      }
+      
+      m_value = cookie;
+    }
+    else 
+    {
+      m_value = "";
+    }
   }
   
   /**
