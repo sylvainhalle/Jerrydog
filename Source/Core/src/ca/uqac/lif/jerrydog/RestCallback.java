@@ -46,6 +46,17 @@ public abstract class RestCallback extends RequestCallback
 		m_method = m;
 		m_path = path;
 	}
+	
+	/**
+	 * Sets the method for this callback
+	 * @param m The method
+	 * @return This callback
+	 */
+	public RestCallback setMethod(Method m)
+	{
+		m_method = m;
+		return this;
+	}
 
 	@Override
 	public final boolean fire(HttpExchange t)
@@ -72,7 +83,7 @@ public abstract class RestCallback extends RequestCallback
 	    InputStream is_post = t.getRequestBody();
 	    data = Server.streamToString(is_post);
 		}
-    Map<String,String> params = Server.queryToMap(data);
+    Map<String,String> params = Server.queryToMap(data, m_method);
     return params;
 	}	
 }

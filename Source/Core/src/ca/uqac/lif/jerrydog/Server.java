@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import ca.uqac.lif.jerrydog.RequestCallback.Method;
+
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -47,7 +49,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.1-alpha";
+	protected static final transient String s_versionString = "0.1.1-alpha";
 
 	/**
 	 * User-agent string
@@ -279,12 +281,13 @@ public class Server implements HttpHandler
 	 * representing the URL "http://abc.com/xyz?a=1&amp;b=2", the method
 	 * will return an object mapping "a" to "1" and "b" to "2".
 	 * @param u The URI to process
+	 * @param m The method (GET, POST, etc.) of the request
 	 * @return A map of attribute-value pairs
 	 */
-	public static Map<String,String> uriToMap(URI u)
+	public static Map<String,String> uriToMap(URI u, Method m)
 	{
 		String query = u.getQuery();
-		return queryToMap(query);
+		return queryToMap(query, m);
 	}
 
 	/**
@@ -293,9 +296,10 @@ public class Server implements HttpHandler
 	 * representing the URL "http://abc.com/xyz?a=1&amp;b=2", the method
 	 * will return an object mapping "a" to "1" and "b" to "2".
 	 * @param query The URI to process
+	 * @param m The method (GET, POST, etc.) of the request
 	 * @return A map of attribute-value pairs
 	 */
-	public static Map<String,String> queryToMap(String query)
+	public static Map<String,String> queryToMap(String query, Method m)
 	{
 		Map<String,String> out = new HashMap<String,String>();
 		if (query == null)
@@ -303,8 +307,16 @@ public class Server implements HttpHandler
 		String[] pairs = query.split("&");
 		if (pairs.length == 1 && pairs[0].indexOf("=") < 0)
 		{
-			// No params; likely a POST request with payload
-			out.put("", pairs[0]);
+			if (m == Method.GET)
+			{
+				// Single param with no value
+				out.put(pairs[0], "");
+			}
+			else
+			{
+				// No params; likely a POST request with payload
+				out.put("", pairs[0]);
+			}
 		}
 		else
 		{
