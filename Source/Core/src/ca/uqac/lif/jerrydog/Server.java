@@ -49,7 +49,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.1.1-alpha";
+	protected static final transient String s_versionString = "0.1.2-alpha";
 
 	/**
 	 * User-agent string
@@ -326,7 +326,7 @@ public class Server implements HttpHandler
 				String[] av = pair.split("=");
 				String att = av[0];
 				String val;
-				if (av.length >= 1)
+				if (av.length > 1)
 					val = av[1];
 				else
 					val = "";
