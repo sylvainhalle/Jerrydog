@@ -36,6 +36,11 @@ public abstract class RestCallback extends RequestCallback
 	protected String m_path;
 	
 	/**
+	 * Ignore the method and check only the path
+	 */
+	protected boolean m_ignoreMethod = false;
+	
+	/**
 	 * Creates a REST callback
 	 * @param m The HTTP method this callback listens to
 	 * @param path The path this callback listens to
@@ -57,6 +62,16 @@ public abstract class RestCallback extends RequestCallback
 		m_method = m;
 		return this;
 	}
+	
+	/**
+	 * Tells the callback to accept any method
+	 * @return This callback
+	 */
+	public RestCallback ignoreMethod()
+	{
+		m_ignoreMethod = true;
+		return this;
+	}
 
 	@Override
 	public final boolean fire(HttpExchange t)
@@ -64,7 +79,7 @@ public abstract class RestCallback extends RequestCallback
     URI u = t.getRequestURI();
     String path = u.getPath();
     String method = t.getRequestMethod();
-    return (method.compareToIgnoreCase(methodToString(m_method)) == 0) 
+    return ((m_ignoreMethod || method.compareToIgnoreCase(methodToString(m_method)) == 0)) 
         && path.compareTo(m_path) == 0;
 	}
 
