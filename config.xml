@@ -26,7 +26,7 @@
   <name>Jerrydog</name>
   
   <!-- The project's version number -->
-  <version>0.1-alpha</version>
+  <version>0.1.3-alpha</version>
   
   <!-- The project's author. Currently this only
   shows up in the footer of the Javadoc documentation. -->
@@ -38,6 +38,8 @@
   <!-- Output jar -->
   <jar>
     <filename>jerrydog.jar</filename>
+    <withdoc>false</withdoc>
+    <withsrc>false</withsrc>
   </jar>
   
   <!--
