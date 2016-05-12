@@ -26,9 +26,20 @@ import com.sun.net.httpserver.Headers;
 
 public class InnerFileCallback extends CachedRequestCallback
 {
+	/**
+	 * The base path to look for resources
+	 */
 	protected String m_path;
 
+	/**
+	 * The class used as a reference to read the files
+	 */
 	protected Class<?> m_context;
+	
+	/**
+	 * Whether to print out messages on the standard error
+	 */
+	protected boolean m_debug = false;
 
 	/**
 	 * Whether or not to send a "404 Not Found" when the resource is
@@ -85,7 +96,10 @@ public class InnerFileCallback extends CachedRequestCallback
 			return response;
 		}
 		// Get file
-		System.err.println("Looking for " + m_path + path + " in context " + m_context);
+		if (m_debug)
+		{
+			System.err.println("Looking for " + m_path + path + " in context " + m_context);
+		}
 		byte[] file_contents = PackageFileReader.readPackageFileToBytes(m_context, m_path + path);
 		if (file_contents != null)
 		{
