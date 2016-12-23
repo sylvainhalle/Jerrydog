@@ -22,14 +22,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import ca.uqac.lif.jerrydog.CallbackResponse.ContentType;
 import ca.uqac.lif.jerrydog.RequestCallback.Method;
 
 import com.sun.net.httpserver.Headers;
@@ -46,10 +50,14 @@ import com.sun.net.httpserver.HttpServer;
  */
 public class Server implements HttpHandler
 {
+	/* Return codes */
+	public static final int ERR_OK = 0;
+	public static final int ERR_IO = 1;
+	
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.1.5-alpha";
+	protected static final transient String s_versionString = "0.1.6";
 
 	/**
 	 * User-agent string
@@ -103,20 +111,12 @@ public class Server implements HttpHandler
 	/**
 	 * Starts the server
 	 */
-	public void startServer()
+	public void startServer() throws IOException
 	{
-		try
-		{
-			m_server = HttpServer.create(new InetSocketAddress(m_port), 0);
-			m_server.createContext("/", this);
-			m_server.setExecutor(null); // creates a default executor
-			m_server.start();
-		}
-		catch (IOException e)
-		{
-			System.err.println("ERROR: cannot instantiate REST interface on port " + m_port);
-			e.printStackTrace();
-		} 
+		m_server = HttpServer.create(new InetSocketAddress(m_port), 0);
+		m_server.createContext("/", this);
+		m_server.setExecutor(null); // creates a default executor
+		m_server.start();
 	}
 
 	/**
@@ -217,7 +217,22 @@ public class Server implements HttpHandler
 		{
 			if (cb.fire(t))
 			{
-				cbr = cb.process(t);
+				try
+				{
+					cbr = cb.process(t);
+				}
+				catch (Exception e)
+				{
+					// Pokemon exception handling, but we want the server to
+					// always reply to the HTTP request with something, even
+					// if it's an error message
+					StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);
+					e.printStackTrace(pw);
+					cbr = new CallbackResponse(t, CallbackResponse.HTTP_INTERNAL_SERVER_ERROR, "<html><body><h1>Internal Server Error</h1>\n<p>The server replied with this exception:</p><pre>" + sw.toString() + "</pre></body></html>", ContentType.HTML);
+					sendResponse(cbr);
+					return;
+				}
 				if (cbr != null)
 				{
 					if (m_debugMode)
@@ -400,13 +415,31 @@ public class Server implements HttpHandler
 		return out;
 	}
 
+	/**
+	 * Main method. Starts an empty server.
+	 * @param args Command line arguments (none, actually)
+	 */
 	public static void main(String[] args)
 	{
 		Server s = new Server();
 		System.out.println("Jerrydog v" + s_versionString);
-		System.out.println("(C) 2015-2016 Laboratoire d'informatique formelle, Université du Québec à Chicoutimi");
+		System.out.println("(C) 2015-2016 Laboratoire d'informatique formelle\nUniversité du Québec à Chicoutimi, Canada");
+		try
+		{
+			s.startServer();
+		}
+		catch (SocketException e)
+		{
+			System.err.println("ERROR: cannot instantiate REST interface on port " + s.m_port + "\nIs another process already using this port?");
+			System.exit(ERR_IO);
+		}
+		catch (IOException e)
+		{
+			System.err.println("ERROR: cannot instantiate REST interface on port " + s.m_port);
+			e.printStackTrace();
+			System.exit(ERR_IO);
+		} 
 		System.out.println("Empty server started on " + s.getServerName() + ":" + s.getServerPort());
 		System.out.println("Type CTRL+C to stop");
-		s.startServer();
 	}
 }
