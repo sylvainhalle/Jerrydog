@@ -40,7 +40,7 @@ public class CachedRequestCallback extends RequestCallback
   /**
    * Whether caching is enabled
    */
-  protected boolean m_cachingEnabled;
+  protected boolean m_cachingEnabled = true;
   
   /**
    * The callback this object wraps around

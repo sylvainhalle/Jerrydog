@@ -18,6 +18,7 @@
 package ca.uqac.lif.jerrydog;
 
 import java.net.URI;
+import java.util.List;
 
 import ca.uqac.lif.jerrydog.InnerFileServer.PackageFileReader;
 
@@ -83,7 +84,8 @@ public class InnerFileCallback extends RequestCallback
 		CallbackResponse response = new CallbackResponse(t);
 		//Give the right content-type to the browser by giving it what it's looking for
 		Headers headers = t.getRequestHeaders();
-		String accept_Header = headers.get("Accept").get(0);
+		List<String> accept_list = headers.get("Accept");
+		String accept_Header = accept_list.get(0);
 		response.setContentType(accept_Header.split(",")[0]);
 
 		URI uri = t.getRequestURI();
