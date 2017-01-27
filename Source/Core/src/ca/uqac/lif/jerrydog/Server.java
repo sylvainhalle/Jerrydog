@@ -111,6 +111,7 @@ public class Server implements HttpHandler
 
 	/**
 	 * Starts the server
+	 * @throws IOException If something goes bad
 	 */
 	public void startServer() throws IOException
 	{
