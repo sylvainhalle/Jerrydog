@@ -1,10 +1,10 @@
 /*
-    Cornipickle, validation of layout bugs in web applications
-    Copyright (C) 2015 Sylvain Hallé
+    Jerrydog, a lightweight web application server in Java
+    Copyright (C) 2015-2017 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -21,27 +21,39 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
+/**
+ * A server that responds to incoming requests by serving an internal file
+ * @author Sylvain Hallé
+ */
 public class InnerFileServer extends Server
 {
   protected String m_resourceFolder;
+  
+  protected static final String s_resourceFolderDefaultName = "resource";
 
   protected Class<? extends InnerFileServer> m_referenceClass;
   
   public InnerFileServer(Class<? extends InnerFileServer> reference, boolean caching_enabled)
   {
     super();
-    m_resourceFolder = "resource";
+    m_resourceFolder = s_resourceFolderDefaultName;
     InnerFileCallback ifc = new InnerFileCallback(m_resourceFolder, this.getClass());
-    ifc.setEnabled(caching_enabled);
-    registerCallback(0, ifc);
+    if (caching_enabled)
+    {
+    	CachedRequestCallback crc = new CachedRequestCallback(ifc);
+    	registerCallback(0, crc);
+    }
+    else
+    {
+    	registerCallback(0, ifc);
+    }
     m_referenceClass = this.getClass();    
   }
 
   protected InnerFileServer(Class<? extends InnerFileServer> c)
   {
     super();
-    m_resourceFolder = "resource";
+    m_resourceFolder = s_resourceFolderDefaultName;
     registerCallback(0, new InnerFileCallback(m_resourceFolder, c));
     m_referenceClass = c;
   }

@@ -1,6 +1,6 @@
 /*
     Jerrydog, a lightweight web application server in Java
-    Copyright (C) 2015-2016 Sylvain Hallé
+    Copyright (C) 2015-2017 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -29,9 +29,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import ca.uqac.lif.jerrydog.CallbackResponse.ContentType;
 import ca.uqac.lif.jerrydog.RequestCallback.Method;
@@ -57,7 +58,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.1.6";
+	protected static final transient String s_versionString = "0.2";
 
 	/**
 	 * User-agent string
@@ -77,7 +78,7 @@ public class Server implements HttpHandler
 	/**
 	 * The list of callbacks to answer HTTP requests
 	 */
-	protected Vector<RequestCallback> m_callbacks;
+	protected List<RequestCallback> m_callbacks;
 
 	/**
 	 * The underlying Java HTTP server
@@ -95,7 +96,7 @@ public class Server implements HttpHandler
 	public Server()
 	{
 		super();
-		m_callbacks = new Vector<RequestCallback>();
+		m_callbacks = new ArrayList<RequestCallback>();
 		m_debugMode = false;
 	}
 

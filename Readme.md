@@ -1,14 +1,16 @@
 Jerrydog: a lightweight web application server in Java
 ======================================================
 
-Jerrydog is a web application server, comparable in essence to
-[Apache Tomcat](), but much simpler and lightweight. It allows you
-to easily create a server that listens to HTTP requests, dispatches
-its content to one of the *callbacks* you can create, and returns
-its response. As such, Jerrydog can be seen as a thin wrapper over
-Java's `com.sun.net.httpserver` classes, taking care of a lot of
-boilerplate code you'd otherwise have to write.
+![The dog in Tom and Jerry](jerrydog.jpg?raw=true)
 
+Jerrydog is a web application server, comparable in essence to
+[Apache Tomcat](https://tomcat.apache.org), but much simpler and
+lightweight (compare Jerrydog's 30 kilobytes to Tomcat's 9 *mega*bytes).
+It allows you to easily create a server that listens to HTTP requests,
+dispatches its content to one of the *callbacks* you can create, and 
+returns its response. As such, Jerrydog can be seen as a thin wrapper 
+over Java's `com.sun.net.httpserver` classes, taking care of a lot of
+boilerplate code you'd otherwise have to write.
 
 How it works
 ------------
@@ -128,7 +130,7 @@ possible to create more complex servers and callbacks.
 
 - The `RestCallback` class provides functionalities to encode and
   decode URL parameters (such as "foo=bar&baz=123&abc")
-- The `InnerFileCallback` can easily server the contents of local files
+- The `InnerFileCallback` can easily serve the contents of local files
 - Cookies can be carried in requests and responses using the `Cookie`
   class
 
@@ -136,6 +138,14 @@ Dependencies
 ------------
 
 None. (And it should stay that way.)
+
+Projects that use Jerrydog
+--------------------------
+
+- [LabPal](https://liflab.github.io/labpal), a library for running
+  experiments on a computer
+- [Cornipickle](https://github.com/liflab/cornipickle), a web layout
+  testing tool
 
 Why is it called Jerrydog?
 --------------------------
@@ -146,5 +156,6 @@ Why is it called Jerrydog?
 About the author                                                   {#about}
 ----------------
 
-Jerrydog was written by Sylvain Hallé, associate professor at Université
-du Québec à Chicoutimi, Canada.
+Jerrydog was written by [Sylvain Hallé](http://leduotang.ca/sylvain),
+associate professor at [Université du Québec à
+Chicoutimi](http://www.uqac.ca), Canada.

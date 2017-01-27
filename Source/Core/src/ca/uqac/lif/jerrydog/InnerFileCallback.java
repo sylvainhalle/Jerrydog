@@ -1,6 +1,6 @@
 /*
     Jerrydog, a lightweight web application server in Java
-    Copyright (C) 2015-2016 Sylvain Hallé
+    Copyright (C) 2015-2017 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -24,7 +24,7 @@ import ca.uqac.lif.jerrydog.InnerFileServer.PackageFileReader;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.Headers;
 
-public class InnerFileCallback extends CachedRequestCallback
+public class InnerFileCallback extends RequestCallback
 {
 	/**
 	 * The base path to look for resources
@@ -78,7 +78,7 @@ public class InnerFileCallback extends CachedRequestCallback
 	}
 
 	@Override
-	public CallbackResponse serve(HttpExchange t)
+	public CallbackResponse process(HttpExchange t)
 	{
 		CallbackResponse response = new CallbackResponse(t);
 		//Give the right content-type to the browser by giving it what it's looking for
