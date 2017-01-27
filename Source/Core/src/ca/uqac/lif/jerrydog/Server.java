@@ -269,7 +269,12 @@ public class Server implements HttpHandler
 		int response_code = cbr.getCode();
 		try
 		{
-			if (contents == null || contents.length == 0)
+			if (response_code == CallbackResponse.HTTP_NOT_MODIFIED)
+			{
+				// A 304 response must have a content length of -1 
+				t.sendResponseHeaders(response_code, -1);
+			}
+			else if (contents == null || contents.length == 0)
 			{
 				t.sendResponseHeaders(response_code, 0);
 				OutputStream os = t.getResponseBody();
