@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
@@ -38,9 +39,17 @@ public class CachedRequestCallback extends RequestCallback
   protected Set<String> m_served;
   
   /**
-   * Whether caching is enabled
+   * Whether caching is enabled on the server side; this means that the
+   * server can answer a {@code 304} ("Not Modified") code to a client that
+   * requests a ressource it has already requested in the past.
    */
-  protected boolean m_cachingEnabled = true;
+  protected boolean m_serverCachingEnabled = true;
+  
+  /**
+   * The time during which a client is allowed to keep the response of a
+   * request in its local cache before requesting it again.
+   */
+  protected int m_clientCachingInterval = 0;
   
   /**
    * The callback this object wraps around
@@ -65,12 +74,31 @@ public class CachedRequestCallback extends RequestCallback
   }
   
   /**
-   * Enables or disables the use of caching
+   * Enables or disables the use of caching  on the server side; this means that the
+   * server can answer a {@code 304} ("Not Modified") code to a client that
+   * requests a ressource it has already requested in the past.
    * @param b Set to {@code true} to enable caching, {@code false} otherwise
    */
   public void setCachingEnabled(boolean b)
   {
-    m_cachingEnabled = b;
+    m_serverCachingEnabled = b;
+  }
+
+  /**
+   * Sets the time during which a client is allowed to keep the response of a
+   * request in its local cache before requesting it again.
+   * @param interval The interval, in seconds
+   */
+  public void setCachingInterval(int interval)
+  {
+	  if (interval >= 0)
+	  {
+		  m_clientCachingInterval = interval;
+	  }
+	  else
+	  {
+		  m_clientCachingInterval = 0;
+	  }
   }
 
   @Override
@@ -78,11 +106,19 @@ public class CachedRequestCallback extends RequestCallback
   {
     URI u = t.getRequestURI();
     String path = u.getPath();
-    if (!m_cachingEnabled || !m_served.contains(path))
+    Headers h = t.getRequestHeaders();
+    if (!m_serverCachingEnabled || !m_served.contains(path) || !h.containsKey("If-Modified-Since"))
     {
       m_served.add(path);
-      return m_callback.process(t);
+      CallbackResponse response = m_callback.process(t);
+      if (m_clientCachingInterval > 0)
+      {
+    	  response.enableCaching(m_clientCachingInterval);
+      }
+      return response;
     }
+    // We get here only if 1. caching is enabled; 2. path has already been served;
+    // 3. browser says it has it in cache
     CallbackResponse out = new CallbackResponse(t, CallbackResponse.HTTP_NOT_MODIFIED, "", "");
     return out;
   }

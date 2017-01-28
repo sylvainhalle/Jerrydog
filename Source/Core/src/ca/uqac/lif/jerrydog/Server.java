@@ -29,10 +29,15 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import ca.uqac.lif.jerrydog.CallbackResponse.ContentType;
 import ca.uqac.lif.jerrydog.RequestCallback.Method;
@@ -89,6 +94,16 @@ public class Server implements HttpHandler
 	 * The debug mode provides additional verbosity
 	 */
 	protected transient boolean m_debugMode;
+	
+	/**
+	 * A calendar object to keep track of the server's local time
+	 */
+	protected final Calendar m_calendar = Calendar.getInstance();
+	
+	/**
+	 * The format for dates in HTTP requests and responses
+	 */
+	protected static final SimpleDateFormat s_dateFormat = setDateFormat();
 
 	/**
 	 * Instantiates an empty server
@@ -98,6 +113,19 @@ public class Server implements HttpHandler
 		super();
 		m_callbacks = new ArrayList<RequestCallback>();
 		m_debugMode = false;
+		
+	}
+	
+	/**
+	 * Sets the date format for HTTP requests and responses
+	 * @return The date format
+	 */
+	protected static SimpleDateFormat setDateFormat()
+	{
+		SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+		// HTTP dates are always GMT
+		format.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return format;
 	}
 
 	/**
@@ -421,6 +449,27 @@ public class Server implements HttpHandler
 		}
 		return out;
 	}
+	
+	/**
+	 * Formats the current server time as a string suitable for HTTP
+	 * requests and responses
+	 * @return The time
+	 */
+	public String getServerTime() 
+	{
+	    return formatDate(m_calendar.getTime());
+	}
+	
+	/**
+	 * Formats a time as a string suitable for HTTP
+	 * requests and responses
+	 * @param d The date to format
+	 * @return The time
+	 */
+	public static String formatDate(Date d)
+	{
+		return s_dateFormat.format(d);
+	}
 
 	/**
 	 * Main method. Starts an empty server.
@@ -430,19 +479,19 @@ public class Server implements HttpHandler
 	{
 		Server s = new Server();
 		System.out.println("Jerrydog v" + s_versionString);
-		System.out.println("(C) 2015-2016 Laboratoire d'informatique formelle\nUniversité du Québec à Chicoutimi, Canada");
+		System.out.println("(C) 2015-2017 Laboratoire d'informatique formelle\nUniversité du Québec à Chicoutimi, Canada");
 		try
 		{
 			s.startServer();
 		}
 		catch (SocketException e)
 		{
-			System.err.println("ERROR: cannot instantiate REST interface on port " + s.m_port + "\nIs another process already using this port?");
+			System.err.println("ERROR: cannot open port " + s.m_port + "\nIs another process already using this port?");
 			System.exit(ERR_IO);
 		}
 		catch (IOException e)
 		{
-			System.err.println("ERROR: cannot instantiate REST interface on port " + s.m_port);
+			System.err.println("ERROR: cannot open port " + s.m_port);
 			e.printStackTrace();
 			System.exit(ERR_IO);
 		} 

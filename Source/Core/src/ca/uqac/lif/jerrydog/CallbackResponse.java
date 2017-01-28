@@ -115,6 +115,19 @@ public class CallbackResponse
 		h.add("Expires", "0");
 		return this;
 	}
+	
+	/**
+	 * Enables client-side caching in the HTTP response to be sent
+	 * @param duration The time, in seconds, that the browser can keep the
+	 * contents of the response in its cache
+	 * @return This response
+	 */
+	public CallbackResponse enableCaching(int duration)
+	{
+		Headers h = m_exchange.getResponseHeaders();
+		h.add("Cache-Control", "private, max-age=" + duration);
+		return this;
+	}
 
 	/**
 	 * Sets the HTTP response code

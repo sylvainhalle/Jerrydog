@@ -27,131 +27,154 @@ import java.io.InputStream;
  */
 public class InnerFileServer extends Server
 {
-  protected String m_resourceFolder;
-  
-  protected static final String s_resourceFolderDefaultName = "resource";
+	/**
+	 * The name for the "resource" folder, where files will be fetched
+	 */
+	protected String m_resourceFolder;
 
-  protected Class<? extends InnerFileServer> m_referenceClass;
-  
-  public InnerFileServer(Class<? extends InnerFileServer> reference, boolean caching_enabled)
-  {
-    super();
-    m_resourceFolder = s_resourceFolderDefaultName;
-    InnerFileCallback ifc = new InnerFileCallback(m_resourceFolder, this.getClass());
-    if (caching_enabled)
-    {
-    	CachedRequestCallback crc = new CachedRequestCallback(ifc);
-    	registerCallback(0, crc);
-    }
-    else
-    {
-    	registerCallback(0, ifc);
-    }
-    m_referenceClass = this.getClass();    
-  }
+	/**
+	 * The default name for the "resource" folder, where files will be fetched
+	 */
+	protected static final String s_resourceFolderDefaultName = "resource";
 
-  protected InnerFileServer(Class<? extends InnerFileServer> c)
-  {
-    super();
-    m_resourceFolder = s_resourceFolderDefaultName;
-    registerCallback(0, new InnerFileCallback(m_resourceFolder, c));
-    m_referenceClass = c;
-  }
-  
-  public InputStream getResourceAsStream(String path)
-  {
-    return m_referenceClass.getResourceAsStream(path);
-  }
-  
-  public String getResourceFolderName()
-  {
-    return m_resourceFolder;
-  }
+	/**
+	 * The class used as a reference for fetching files. All paths
+	 * will be relative to the location of this class in the project.
+	 */
+	protected Class<? extends InnerFileServer> m_referenceClass;
 
-  public static byte[] readBytes(InputStream is)
-  {
-    int nRead;
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    byte[] data = new byte[2048];
-    try
-    {
-      while ((nRead = is.read(data, 0, data.length)) != -1)
-      {
-        buffer.write(data, 0, nRead);
-      }
-      buffer.flush();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    return buffer.toByteArray();
-  }
-  
-  static class PackageFileReader
-  {
-    public static String readPackageFile(Class<?> c, String path)
-    {
-      InputStream in = c.getResourceAsStream(path);
-      String out;
-      try
-      {
-        out = readPackageFile(in);
-      }
-      catch (IOException e)
-      {
-        e.printStackTrace();
-        return null;
-      }
-      return out;
-    }
-    
-    public static byte[] readPackageFileToBytes(Class<?> c, String path)
-    {
-      InputStream in = getResourceAsStream(c, path);
-      byte[] file_contents = null;
-      if (in != null)
-      {
-        file_contents = InnerFileServer.readBytes(in);
-      }
-      return file_contents;
-    }
-    
-    public static InputStream getResourceAsStream(Class<?> c, String path)
-    {
-      InputStream in = c.getResourceAsStream(path);
-      return in;
-    }
-    
-    /**
-     * Reads a file and puts its contents in a string
-     * @param in The input stream to read
-     * @return The file's contents, and empty string if the file
-     * does not exist
-     */
-    public static String readPackageFile(InputStream in) throws IOException
-    {
-      if (in == null)
-      {
-        throw new IOException();
-      }
-      java.util.Scanner scanner = null;
-      StringBuilder out = new StringBuilder();
-      try
-      {
-        scanner = new java.util.Scanner(in, "UTF-8");
-        while (scanner.hasNextLine())
-        {
-          String line = scanner.nextLine();
-          out.append(line).append(System.getProperty("line.separator"));
-        }
-      }
-      finally
-      {
-        if (scanner != null)
-          scanner.close();
-      }
-      return out.toString();
-    }
-  }
+	/**
+	 * Instantiates a new server with all caching disabled
+	 * @param reference The class used as a reference for fetching files. All
+	 * paths will be relative to the location of this class in the project.
+	 */
+	public InnerFileServer(Class<? extends InnerFileServer> reference)
+	{
+		this(reference, false, 0);
+	}
+
+	/**
+	 * Instantiates a new server
+	 * @param reference The class used as a reference for fetching files. All
+	 * paths will be relative to the location of this class in the project.
+	 * @param server_caching Sets whether the server caches past requests and
+	 * issues 304 codes for them
+	 * @param caching_interval The interval (in seconds) during which a client 
+	 * is allowed to locally cache the responses of past requests. Set to 0 
+	 * to disable client-side caching. 
+	 */
+	public InnerFileServer(Class<? extends InnerFileServer> reference, boolean server_caching, int caching_interval)
+	{
+		super();
+		m_resourceFolder = s_resourceFolderDefaultName;
+		InnerFileCallback ifc = new InnerFileCallback(m_resourceFolder, this.getClass());
+		if (server_caching)
+		{
+			CachedRequestCallback crc = new CachedRequestCallback(ifc);
+			crc.setCachingInterval(caching_interval);
+			registerCallback(0, crc);
+		}
+		else
+		{
+			registerCallback(0, ifc);
+		}
+		m_referenceClass = reference;    
+	}
+
+	public InputStream getResourceAsStream(String path)
+	{
+		return m_referenceClass.getResourceAsStream(path);
+	}
+
+	public String getResourceFolderName()
+	{
+		return m_resourceFolder;
+	}
+
+	public static byte[] readBytes(InputStream is)
+	{
+		int nRead;
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		byte[] data = new byte[2048];
+		try
+		{
+			while ((nRead = is.read(data, 0, data.length)) != -1)
+			{
+				buffer.write(data, 0, nRead);
+			}
+			buffer.flush();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return buffer.toByteArray();
+	}
+
+	static class PackageFileReader
+	{
+		public static String readPackageFile(Class<?> c, String path)
+		{
+			InputStream in = c.getResourceAsStream(path);
+			String out;
+			try
+			{
+				out = readPackageFile(in);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				return null;
+			}
+			return out;
+		}
+
+		public static byte[] readPackageFileToBytes(Class<?> c, String path)
+		{
+			InputStream in = getResourceAsStream(c, path);
+			byte[] file_contents = null;
+			if (in != null)
+			{
+				file_contents = InnerFileServer.readBytes(in);
+			}
+			return file_contents;
+		}
+
+		public static InputStream getResourceAsStream(Class<?> c, String path)
+		{
+			InputStream in = c.getResourceAsStream(path);
+			return in;
+		}
+
+		/**
+		 * Reads a file and puts its contents in a string
+		 * @param in The input stream to read
+		 * @return The file's contents, and empty string if the file
+		 * does not exist
+		 */
+		public static String readPackageFile(InputStream in) throws IOException
+		{
+			if (in == null)
+			{
+				throw new IOException();
+			}
+			java.util.Scanner scanner = null;
+			StringBuilder out = new StringBuilder();
+			try
+			{
+				scanner = new java.util.Scanner(in, "UTF-8");
+				while (scanner.hasNextLine())
+				{
+					String line = scanner.nextLine();
+					out.append(line).append(System.getProperty("line.separator"));
+				}
+			}
+			finally
+			{
+				if (scanner != null)
+					scanner.close();
+			}
+			return out.toString();
+		}
+	}
 }
