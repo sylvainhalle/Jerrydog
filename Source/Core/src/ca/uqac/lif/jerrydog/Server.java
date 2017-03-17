@@ -470,6 +470,15 @@ public class Server implements HttpHandler
 	{
 		return s_dateFormat.format(d);
 	}
+	
+	/**
+	 * Gets the version of this instance of Jerrydog
+	 * @return The version string
+	 */
+	public static String getVersionString()
+	{
+		return s_versionString;
+	}
 
 	/**
 	 * Main method. Starts an empty server.
