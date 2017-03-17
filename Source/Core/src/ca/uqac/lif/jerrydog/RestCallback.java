@@ -29,17 +29,17 @@ public abstract class RestCallback extends RequestCallback
 	 * The HTTP method that this callback listens to
 	 */
 	protected Method m_method;
-	
+
 	/**
 	 * The path that this callback listens to
 	 */
 	protected String m_path;
-	
+
 	/**
 	 * Ignore the method and check only the path
 	 */
 	protected boolean m_ignoreMethod = false;
-	
+
 	/**
 	 * Creates a REST callback
 	 * @param m The HTTP method this callback listens to
@@ -51,7 +51,7 @@ public abstract class RestCallback extends RequestCallback
 		m_method = m;
 		m_path = path;
 	}
-	
+
 	/**
 	 * Sets the method for this callback
 	 * @param m The method
@@ -62,7 +62,7 @@ public abstract class RestCallback extends RequestCallback
 		m_method = m;
 		return this;
 	}
-	
+
 	/**
 	 * Tells the callback to accept any method
 	 * @return This callback
@@ -76,29 +76,41 @@ public abstract class RestCallback extends RequestCallback
 	@Override
 	public final boolean fire(HttpExchange t)
 	{
-    URI u = t.getRequestURI();
-    String path = u.getPath();
-    String method = t.getRequestMethod();
-    return ((m_ignoreMethod || method.compareToIgnoreCase(methodToString(m_method)) == 0)) 
-        && path.compareTo(m_path) == 0;
+		URI u = t.getRequestURI();
+		String path = u.getPath();
+		String method = t.getRequestMethod();
+		return ((m_ignoreMethod || method.compareToIgnoreCase(methodToString(m_method)) == 0)) 
+				&& path.compareTo(m_path) == 0;
 	}
 
 	public Map<String,String> getParameters(HttpExchange t)
 	{
 		String data = null;
+		if (m_ignoreMethod)
+		{
+			// Merge parameters from both GET and POST
+			URI u = t.getRequestURI();
+			data = u.getQuery();
+			Map<String,String> params_get = Server.queryToMap(data, Method.GET);
+			InputStream is_post = t.getRequestBody();
+			data = Server.streamToString(is_post);
+			Map<String,String> params_post = Server.queryToMap(data, Method.POST);
+			params_get.putAll(params_post);
+			return params_get;
+		}
 		if (m_method == Method.GET)
 		{
-	    // Read GET data
+			// Read GET data
 			URI u = t.getRequestURI();
 			data = u.getQuery();
 		}
 		else
 		{
-	    // Read POST data
-	    InputStream is_post = t.getRequestBody();
-	    data = Server.streamToString(is_post);
+			// Read POST data
+			InputStream is_post = t.getRequestBody();
+			data = Server.streamToString(is_post);
 		}
-    Map<String,String> params = Server.queryToMap(data, m_method);
-    return params;
+		Map<String,String> params = Server.queryToMap(data, m_method);
+		return params;
 	}	
 }

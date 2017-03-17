@@ -1,6 +1,6 @@
 /*
     Jerrydog, a lightweight web application server in Java
-    Copyright (C) 2015-2017 Sylvain Hallé
+    Copyright (C) 2015-2017 Sylvain HallÃ©
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -37,7 +37,7 @@ public class RestCallbackTest
 	}
 	
 	@Test
-	public void testQueryToMap2()
+	public void testQueryToMap2a()
 	{
 		String query = "p";
 		Map<String,String> map = Server.queryToMap(query, Method.GET);

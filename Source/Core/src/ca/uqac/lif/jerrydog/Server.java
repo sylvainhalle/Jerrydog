@@ -63,7 +63,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.2";
+	protected static final transient String s_versionString = "0.2.1";
 
 	/**
 	 * User-agent string
