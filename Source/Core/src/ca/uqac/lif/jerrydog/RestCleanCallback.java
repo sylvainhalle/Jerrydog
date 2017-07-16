@@ -23,54 +23,21 @@ import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
 
-public abstract class RestCallback extends RequestCallback
+/**
+ * REST callback for "clean" URLs, i.e. URLs whose parameters are
+ * inside the path, instead of the parameters section of the URL.
+ * For example, an URL like <code>page?id=3&amp;section=index</code> would
+ * be remplaced in a clean URL by something like
+ * <code>page/3/index</code>. Here, <code>page</code> is the path,
+ * and the rest of the URL are actually parameters.
+ * 
+ * @author Sylvain Hallé
+ */
+public abstract class RestCleanCallback extends RestCallback
 {
-	/**
-	 * The HTTP method that this callback listens to
-	 */
-	protected Method m_method;
-
-	/**
-	 * The path that this callback listens to
-	 */
-	protected String m_path;
-
-	/**
-	 * Ignore the method and check only the path
-	 */
-	protected boolean m_ignoreMethod = false;
-
-	/**
-	 * Creates a REST callback
-	 * @param m The HTTP method this callback listens to
-	 * @param path The path this callback listens to
-	 */
-	public RestCallback(Method m, String path)
+	public RestCleanCallback(Method m, String path)
 	{
-		super();
-		m_method = m;
-		m_path = path;
-	}
-
-	/**
-	 * Sets the method for this callback
-	 * @param m The method
-	 * @return This callback
-	 */
-	public RestCallback setMethod(Method m)
-	{
-		m_method = m;
-		return this;
-	}
-
-	/**
-	 * Tells the callback to accept any method
-	 * @return This callback
-	 */
-	public RestCallback ignoreMethod()
-	{
-		m_ignoreMethod = true;
-		return this;
+		super(m, path);
 	}
 
 	@Override
@@ -80,25 +47,37 @@ public abstract class RestCallback extends RequestCallback
 		String path = u.getPath();
 		String method = t.getRequestMethod();
 		return ((m_ignoreMethod || method.compareToIgnoreCase(methodToString(m_method)) == 0)) 
-				&& path.compareTo(m_path) == 0;
+				&& (path.compareTo(m_path) == 0 || path.startsWith(m_path + "/"));
 	}
-
+	
+	@Override
 	public Map<String,String> getParameters(HttpExchange t)
 	{
 		String data = null;
+		Map<String,String> params = null;
+		URI u = t.getRequestURI();
+		String path = u.getPath();
+		path = path.substring(m_path.length());
+		if (path.startsWith("/"))
+		{
+			// Remove first slash
+			path = path.substring(1);
+		}
 		if (m_method == Method.GET)
 		{
-			// Read GET data
-			URI u = t.getRequestURI();
+			// Read GET data			
 			data = u.getQuery();
+			params = Server.queryToMap(data, m_method);
+			params.put("", path);
 		}
 		else
 		{
 			// Read POST data
 			InputStream is_post = t.getRequestBody();
 			data = Server.streamToString(is_post);
+			params = Server.queryToMap(data, m_method);
+			params.put("", path);
 		}
-		Map<String,String> params = Server.queryToMap(data, m_method);
 		return params;
-	}	
+	}
 }

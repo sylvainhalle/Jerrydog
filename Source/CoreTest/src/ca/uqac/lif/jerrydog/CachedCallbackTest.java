@@ -71,6 +71,8 @@ public class CachedCallbackTest
 		
 		protected final Headers m_responseHeaders = new Headers();
 		
+		protected String m_method = "GET";
+		
 		public FakeRequest()
 		{
 			super();
@@ -79,7 +81,13 @@ public class CachedCallbackTest
 		
 		public FakeRequest(String request)
 		{
+			this(request, "GET");
+		}
+		
+		public FakeRequest(String request, String method)
+		{
 			super(request);
+			m_method = method;
 			m_requestHeaders.add("Accept", "text/plain");
 		}
 		
@@ -93,6 +101,12 @@ public class CachedCallbackTest
 		public Headers getResponseHeaders()
 		{
 			return m_responseHeaders;
+		}
+		
+		@Override
+		public String getRequestMethod()
+		{
+			return m_method;
 		}
 	}
 }
