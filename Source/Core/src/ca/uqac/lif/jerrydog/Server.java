@@ -63,7 +63,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.2";
+	protected static final transient String s_versionString = "0.2.1";
 
 	/**
 	 * User-agent string
@@ -469,6 +469,15 @@ public class Server implements HttpHandler
 	public static String formatDate(Date d)
 	{
 		return s_dateFormat.format(d);
+	}
+	
+	/**
+	 * Gets the version of this instance of Jerrydog
+	 * @return The version string
+	 */
+	public static String getVersionString()
+	{
+		return s_versionString;
 	}
 
 	/**

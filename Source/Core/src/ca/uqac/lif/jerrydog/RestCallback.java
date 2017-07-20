@@ -86,6 +86,18 @@ public abstract class RestCallback extends RequestCallback
 	public Map<String,String> getParameters(HttpExchange t)
 	{
 		String data = null;
+		if (m_ignoreMethod)
+		{
+			// Merge parameters from both GET and POST
+			URI u = t.getRequestURI();
+			data = u.getQuery();
+			Map<String,String> params_get = Server.queryToMap(data, Method.GET);
+			InputStream is_post = t.getRequestBody();
+			data = Server.streamToString(is_post);
+			Map<String,String> params_post = Server.queryToMap(data, Method.POST);
+			params_get.putAll(params_post);
+			return params_get;
+		}
 		if (m_method == Method.GET)
 		{
 			// Read GET data
