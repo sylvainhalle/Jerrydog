@@ -51,7 +51,7 @@ import com.sun.net.httpserver.HttpServer;
  * A server listens to HTTP <em>requests</em>, dispatches them to the
  * appropriate <em>callbacks</em>, and returns their <em>response</em>.
  * 
- * @author Sylvain
+ * @author Sylvain Hallé
  *
  */
 public class Server implements HttpHandler
@@ -63,7 +63,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.2.1";
+	protected static final transient String s_versionString = "0.3.1";
 
 	/**
 	 * User-agent string
@@ -150,11 +150,11 @@ public class Server implements HttpHandler
 	}
 
 	/**
-	 * Stops the server
+	 * Stops the server immediately
 	 */
 	public void stopServer()
 	{
-		m_server.stop(CallbackResponse.HTTP_OK);
+		m_server.stop(0);
 	}
 
 	/**
