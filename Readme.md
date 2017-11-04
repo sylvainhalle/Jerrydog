@@ -146,6 +146,9 @@ Projects that use Jerrydog
   experiments on a computer
 - [Cornipickle](https://github.com/liflab/cornipickle), a web layout
   testing tool
+- The [HTTP palette](https://github.com/liflab/beepbeep-3-palettes)
+  of the [BeepBeep 3](https://liflab.github.io/beepbeep-3) event
+  stream processing engine
 
 Why is it called Jerrydog?
 --------------------------
