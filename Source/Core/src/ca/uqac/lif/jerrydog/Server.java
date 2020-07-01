@@ -1,6 +1,6 @@
 /*
     Jerrydog, a lightweight web application server in Java
-    Copyright (C) 2015-2017 Sylvain Hallé
+    Copyright (C) 2015-2020 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -63,7 +63,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.3.1";
+	protected static final transient String s_versionString = "0.3.2";
 
 	/**
 	 * User-agent string

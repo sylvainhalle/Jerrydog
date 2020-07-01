@@ -1,6 +1,6 @@
 /*
     Jerrydog, a lightweight web application server in Java
-    Copyright (C) 2015-2016 Sylvain Hallé
+    Copyright (C) 2015-2020 Sylvain Hallé
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -55,11 +55,6 @@ public class CallbackResponse
 	protected int m_responseCode;
 
 	/**
-	 * The response content type
-	 */
-	protected String m_contentType;
-
-	/**
 	 * The response headers
 	 */
 	protected Map<String,String> m_headers;
@@ -91,7 +86,7 @@ public class CallbackResponse
 		m_responseCode = response_code;
 		m_contents = contents;
 		m_headers = new HashMap<String,String>();
-		m_contentType = content_type;
+		setContentType(content_type);
 	}
 
 	/**
@@ -240,7 +235,7 @@ public class CallbackResponse
 	 */
 	public String getContentType()
 	{
-		return m_contentType;
+		return m_headers.get("Content-Type");
 	}
 
 	/**
