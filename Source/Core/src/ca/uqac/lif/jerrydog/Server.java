@@ -63,7 +63,7 @@ public class Server implements HttpHandler
 	/**
 	 * The version string
 	 */
-	protected static final transient String s_versionString = "0.3.2";
+	protected static final transient String s_versionString = "0.3.3";
 
 	/**
 	 * User-agent string
@@ -488,7 +488,7 @@ public class Server implements HttpHandler
 	{
 		Server s = new Server();
 		System.out.println("Jerrydog v" + s_versionString);
-		System.out.println("(C) 2015-2017 Laboratoire d'informatique formelle\nUniversité du Québec à Chicoutimi, Canada");
+		System.out.println("(C) 2015-2023 Laboratoire d'informatique formelle\nUniversité du Québec à Chicoutimi, Canada");
 		try
 		{
 			s.startServer();

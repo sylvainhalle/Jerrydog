@@ -26,18 +26,24 @@
   <name>Jerrydog</name>
   
   <!-- The project's version number -->
-  <version>0.3.2</version>
+  <version>0.3.3</version>
   
   <!-- The project's author. Currently this only
   shows up in the footer of the Javadoc documentation. -->
   <author>Sylvain Hall&#233;</author>
+
+  <!-- The project's package (with a trailing slash) -->
+  <package>ca/uqac/lif/jerrydog/</package>
   
   <!-- The project's main class -->
   <mainclass>ca.uqac.lif.jerrydog.Server</mainclass>
+
+  <!-- The target JDK for which we are compiling -->
+  <targetjdk>8</targetjdk>
   
   <!-- Output jar -->
   <jar>
-    <filename>jerrydog.jar</filename>
+    <filename>jerrydog</filename>
     <withdoc>false</withdoc>
     <withsrc>false</withsrc>
   </jar>
